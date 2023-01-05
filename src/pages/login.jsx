@@ -1,14 +1,21 @@
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const Login = () => {
-  const { control, handleSubmit } = useForm({
-    defaultValues: {
-      userEmail: "",
-      userPassword: "",
-      userName: "",
-    },
+  const signUpSchema = yup.object().shape({
+    email: yup.string().email().required(),
+    password: yup.string().required(),
+    name: yup.string().required(),
   });
+
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(signUpSchema) });
 
   const formSubmit = (data) => console.log(data);
 
@@ -37,19 +44,14 @@ const Login = () => {
                   Name
                 </label>
                 <div className="mt-1">
-                  <Controller
-                    rules={{ required: true }}
-                    name="userName"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <input
-                        value={value}
-                        onChange={onChange}
-                        className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                      />
-                    )}
+                  <input
+                    {...register("name")}
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
+                {errors.name && (
+                  <p className="text-red-300 ">{errors.name.message}</p>
+                )}
               </div>
               <div>
                 <label
@@ -59,20 +61,14 @@ const Login = () => {
                   Email address
                 </label>
                 <div className="mt-1">
-                  <Controller
-                    name="userEmail"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { onChange, value } }) => (
-                      <input
-                        value={value}
-                        onChange={onChange}
-                        name="userEmail"
-                        className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                      />
-                    )}
+                  <input
+                    {...register("email")}
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
+                {errors.email && (
+                  <p className="text-red-300 ">{errors.email.message}</p>
+                )}
               </div>
               <div>
                 <label
@@ -82,19 +78,14 @@ const Login = () => {
                   Name
                 </label>
                 <div className="mt-1">
-                  <Controller
-                    name="userPassword"
-                    control={control}
-                    rules={{ required: true }}
-                    render={({ field: { onChange, value } }) => (
-                      <input
-                        value={value}
-                        onChange={onChange}
-                        className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                      />
-                    )}
+                  <input
+                    {...register("password")}
+                    className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   />
                 </div>
+                {errors.password && (
+                  <p className="text-red-300 ">{errors.password.message}</p>
+                )}
               </div>
 
               <div className="flex items-center justify-between">
@@ -138,10 +129,7 @@ const Login = () => {
 
               <div className="mt-6 grid grid-cols-3 gap-3">
                 <div>
-                  <a
-                    href="javasript:void(0)"
-                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-                  >
+                  <a className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
                     <span className="sr-only">Sign in with Facebook</span>
                     <svg
                       className="h-5 w-5"
@@ -159,10 +147,7 @@ const Login = () => {
                 </div>
 
                 <div>
-                  <a
-                    href="javasript:void(0)"
-                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-                  >
+                  <a className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
                     <span className="sr-only">Sign in with Twitter</span>
                     <svg
                       className="h-5 w-5"
@@ -176,10 +161,7 @@ const Login = () => {
                 </div>
 
                 <div>
-                  <a
-                    href="javasript:void(0)"
-                    className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
-                  >
+                  <a className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50">
                     <span className="sr-only">Sign in with GitHub</span>
                     <svg
                       className="h-5 w-5"
