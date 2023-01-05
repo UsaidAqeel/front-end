@@ -15,7 +15,7 @@ export default function Login() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(loginSchema) });
 
-  const submit = (e) => console.log(e);
+  const onSubmit = (e) => console.log(e);
 
   return (
     <>
@@ -120,7 +120,7 @@ export default function Login() {
                   action="#"
                   method="POST"
                   className="space-y-6"
-                  onSubmit={handleSubmit(submit)}
+                  onSubmit={handleSubmit(onSubmit)}
                 >
                   <div>
                     <label
