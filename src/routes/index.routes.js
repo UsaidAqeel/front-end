@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Signup from "../pages/SignUp";
 import Example from "../pages/home";
-import Login from "../pages/Login";
+import Login from "../pages/login";
 
 const RoutesCmp = () => {
   return (
