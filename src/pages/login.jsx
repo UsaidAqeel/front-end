@@ -1,11 +1,15 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginUser } from "../services/index.service";
+import { BounceLoader } from "react-spinners";
+import { toast } from "react-hot-toast";
 
 export default function Login() {
+  const [loader, setloader] = useState(false);
+  const Navigator = useNavigate();
   const loginSchema = yup.object().shape({
     email: yup.string().email().required(),
     password: yup.string().required(),
@@ -16,14 +20,27 @@ export default function Login() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(loginSchema) });
 
-  const onSubmit = async (data) =>{
-     const obj = {userEmail : data.email,userPassword : data.password}
-     const res = await loginUser(obj);
-     console.log(res);
+  const onSubmit = async (data) => {
+    const obj = { userEmail: data.email, userPassword: data.password };
+    setloader(true);
+    const res = await loginUser(obj);
+    if (!res.error) {
+      localStorage.setItem(res.data.token, "token");
+      Navigator("/home");
+      return;
+    } else {
+      toast.error(res.data.message);
+      setloader(false);
+    }
   };
 
   return (
     <>
+      {loader && (
+        <div className="!z-10 bg-opacity-25 flex justify-center items-center bg-white w-100 h-screen backdrop-blur-md">
+          <BounceLoader size={40} />
+        </div>
+      )}
       <div className="flex min-h-screen">
         <div className="flex flex-1 flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
           <div className="mx-auto w-full max-w-sm lg:w-96">
