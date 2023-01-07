@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { loginUser } from "../services/index.service";
 
 export default function Login() {
   const loginSchema = yup.object().shape({
@@ -15,7 +16,11 @@ export default function Login() {
     formState: { errors },
   } = useForm({ resolver: yupResolver(loginSchema) });
 
-  const onSubmit = (e) => console.log(e);
+  const onSubmit = async (data) =>{
+     const obj = {userEmail : data.email,userPassword : data.password}
+     const res = await loginUser(obj);
+     console.log(res);
+  };
 
   return (
     <>

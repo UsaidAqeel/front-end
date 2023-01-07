@@ -77,4 +77,6 @@ export const navigation = [
   { name: "Posts", href: "#target" },
   { name: "Create Post", href: "#" },
   { name: "Company", href: "#" },
-];
+]; 
+
+export const baseUrl = "http://localhost:9000"

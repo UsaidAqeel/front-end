@@ -3,6 +3,7 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
+import { signupUser } from "../services/index.service";
 
 const Signup = () => {
   const signUpSchema = yup.object().shape({
@@ -17,7 +18,12 @@ const Signup = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(signUpSchema) });
 
-  const formSubmit = (data) => console.log(data);
+  const formSubmit = async (data) => {
+    const { email, name, password } = data;
+    const obj = { userName: name, userEmail: email, userPassword: password };
+    const res = await signupUser({ ...obj });
+    console.log(res);
+  };
 
   return (
     <div className="w-full bg-slate-100 h-screen overflow-y-scroll scroll cus">
@@ -61,7 +67,7 @@ const Signup = () => {
                   />
                 </div>
                 {errors.name && (
-                  <p className="text-red-300 ">{errors.name.message}</p>
+                  <p className="text-red-300 text-sm">{errors.name.message}</p>
                 )}
               </div>
               <div>
@@ -78,7 +84,7 @@ const Signup = () => {
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-300 ">{errors.email.message}</p>
+                  <p className="text-red-300 text-sm">{errors.email.message}</p>
                 )}
               </div>
               <div>
@@ -86,7 +92,7 @@ const Signup = () => {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Name
+                  Password
                 </label>
                 <div className="mt-1">
                   <input
@@ -95,7 +101,9 @@ const Signup = () => {
                   />
                 </div>
                 {errors.password && (
-                  <p className="text-red-300 ">{errors.password.message}</p>
+                  <p className="text-red-300 text-sm">
+                    {errors.password.message}
+                  </p>
                 )}
               </div>
 
@@ -118,7 +126,7 @@ const Signup = () => {
                   to={"/login"}
                   className="text-sm font-medium text-indigo-600 cursor-pointer"
                 >
-                Login?
+                  Login?
                 </Link>
               </div>
 
