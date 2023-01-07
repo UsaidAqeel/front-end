@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -10,6 +10,14 @@ import { toast } from "react-hot-toast";
 export default function Login() {
   const [loader, setloader] = useState(false);
   const Navigator = useNavigate();
+
+  useEffect (() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      Navigator("/home");
+    }
+  }, []);
+
   const loginSchema = yup.object().shape({
     email: yup.string().email().required(),
     password: yup.string().required(),
@@ -25,7 +33,7 @@ export default function Login() {
     setloader(true);
     const res = await loginUser(obj);
     if (!res.error) {
-      localStorage.setItem(res.data.token, "token");
+      localStorage.setItem("token", res.data.token);
       Navigator("/home");
       return;
     } else {

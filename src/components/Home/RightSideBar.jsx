@@ -1,13 +1,68 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { createPosts, getPost } from "../../services/index.service";
+import { BounceLoader } from "react-spinners";
+import { toast } from "react-hot-toast";
 
-const RightSideBar = () => {
+const RightSideBar = ({ getval, setVal, setArray }) => {
   const [open, setOpen] = useState(false);
+  const [loader, setloader] = useState(false);
+  useEffect(() => {
+    setOpen(setVal);
+  }, [setVal]);
+
+  const handleClose = () => {
+    getval(false);
+    setOpen(false);
+  };
+
+  const createPostSchema = yup.object().shape({
+    title: yup.string().required(),
+    Description: yup.string().required(),
+    name: yup.string().required(),
+  });
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(createPostSchema) });
+
+  const handleCreatePost = async (data) => {
+    const { Description, title, name } = data;
+    const obj = {
+      postTitle: title,
+      postDes: Description,
+      userName: name,
+    };
+    setloader(true);
+    const res = await createPosts(obj);
+    if (!res.error) {
+      setloader(false);
+      setOpen(false);
+      getval(false);
+      const Get = await getPost();
+      if (!Get.error) {
+        console.log(Get);
+        setArray(Get.data.data.data);
+      }
+    } else {
+      toast.error("something is wrong");
+    }
+  };
+
   return (
     <>
+      {loader && (
+        <div className="!z-10 bg-opacity-25 flex justify-center items-center bg-white w-100 h-screen backdrop-blur-md">
+          <BounceLoader size={40} />
+        </div>
+      )}
       <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={setOpen}>
+        <Dialog as="div" className="relative z-10" onClose={handleClose}>
           <Transition.Child
             as={Fragment}
             enter="ease-in-out duration-500"
@@ -33,59 +88,82 @@ const RightSideBar = () => {
                   leaveTo="translate-x-full"
                 >
                   <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
-                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                    <div className="flex relative h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                       <div className="px-4 sm:px-6">
                         <h1 className="text-2xl font-semibold">Create Post</h1>
-                        <div>
-                          <label
-                            htmlFor="email"
-                            className="block text-sm font-medium text-gray-700 my-2"
-                          >
-                            Title
-                          </label>
-                          <div className="mt-1">
-                            <input
-                              type="text"
-                              name="email"
-                              id="email"
-                              className="block border outline-none p-2 w-full my-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                              placeholder="Enter Title"
-                            />
+                        <form onSubmit={handleSubmit(handleCreatePost)}>
+                          <div>
+                            <label
+                              htmlFor="email"
+                              className="block text-sm font-medium text-gray-700 my-2"
+                            >
+                              Title
+                            </label>
+                            <div className="mt-1">
+                              <input
+                                {...register("title")}
+                                type="text"
+                                className="block border outline-none p-2 w-full my-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                placeholder="Enter Title"
+                              />
+                            </div>
+                            {errors.title && (
+                              <p className="text-red-700 text-sm">
+                                {errors.title.message}
+                              </p>
+                            )}
                           </div>
-                        </div>
-                        <div className="my-4">
-                          <label
-                            htmlFor="comment"
-                            className="block text-sm font-medium text-gray-700"
-                          >
-                            Add post description
-                          </label>
-                          <div className="mt-1">
-                            <textarea
-                              rows={4}
-                              name="Description"
-                              placeholder="Description"
-                              className="block w-full outline-none p-2 border border-gray-300 shadow-sm sm:text-sm"
-                              defaultValue={""}
-                            />
+                          <div>
+                            <label
+                              htmlFor="email"
+                              className="block text-sm font-medium text-gray-700 my-2"
+                            >
+                              Name
+                            </label>
+                            <div className="mt-1">
+                              <input
+                                {...register("name")}
+                                type="text"
+                                className="block border outline-none p-2 w-full my-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                placeholder="Enter name"
+                              />
+                            </div>
+                            {errors.name && (
+                              <p className="text-red-700 text-sm">
+                                {errors.name.message}
+                              </p>
+                            )}
                           </div>
-                        </div>
-                        <div>
-                          <label
-                            htmlFor="email"
-                            className="block text-sm font-medium text-gray-700 my-2"
-                          >
-                            Category
-                          </label>
-                          <div className="mt-1">
-                            <input
-                              type="text"
-                              name="email"
-                              className="block border outline-none p-2 w-full my-2 border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                              placeholder="Enter Category"
-                            />
+                          <div className="my-4">
+                            <label
+                              htmlFor="comment"
+                              className="block text-sm font-medium text-gray-700"
+                            >
+                              Add post description
+                            </label>
+                            <div className="mt-1">
+                              <textarea
+                                {...register("Description")}
+                                rows={4}
+                                placeholder="Description"
+                                className="block w-full outline-none p-2 border border-gray-300 shadow-sm sm:text-sm"
+                              />
+                            </div>
+                            {errors.Description && (
+                              <p className="text-red-700 text-sm">
+                                {errors.Description.message}
+                              </p>
+                            )}
                           </div>
-                        </div>
+                          <div className="absolute bottom-0 py-3 right-0 pr-2">
+                            <button
+                              type="submit"
+                              className="py-3 px-4 text-sm bg-indigo-500 text-white "
+                            >
+                              Create Post
+                            </button>
+                          </div>
+                        </form>
                       </div>
                     </div>
                   </Dialog.Panel>

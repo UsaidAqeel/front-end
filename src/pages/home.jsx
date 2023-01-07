@@ -1,75 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { navigationFooter, navigation } from "../constant/index";
 import RightSideBar from "../components/Home/RightSideBar";
-
-const posts = [
-  {
-    title: "Boost your conversion rate",
-    href: "#",
-    category: { name: "Article", href: "#" },
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto accusantium praesentium eius, ut atque fuga culpa, similique sequi cum eos quis dolorum.",
-    date: "Mar 16, 2020",
-    datetime: "2020-03-16",
-    imageUrl:
-      "https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1679&q=80",
-    readingTime: "6 min",
-    author: {
-      name: "Roel Aufderehar",
-      href: "#",
-      imageUrl:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-  },
-  {
-    title: "How to use search engine optimization to drive sales",
-    href: "#",
-    category: { name: "Video", href: "#" },
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit facilis asperiores porro quaerat doloribus, eveniet dolore. Adipisci tempora aut inventore optio animi., tempore temporibus quo laudantium.",
-    date: "Mar 10, 2020",
-    datetime: "2020-03-10",
-    imageUrl:
-      "https://images.unsplash.com/photo-1547586696-ea22b4d4235d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1679&q=80",
-    readingTime: "4 min",
-    author: {
-      name: "Brenna Goyette",
-      href: "#",
-      imageUrl:
-        "https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-  },
-  {
-    title: "Improve your customer experience",
-    href: "#",
-    category: { name: "Case Study", href: "#" },
-    description:
-      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint harum rerum voluptatem quo recusandae magni placeat saepe molestiae, sed excepturi cumque corporis perferendis hic.",
-    date: "Feb 12, 2020",
-    datetime: "2020-02-12",
-    imageUrl:
-      "https://images.unsplash.com/photo-1492724441997-5dc865305da7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1679&q=80",
-    readingTime: "11 min",
-    author: {
-      name: "Daniela Metz",
-      href: "#",
-      imageUrl:
-        "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-  },
-];
+import { getPost } from "../services/index.service";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function Example() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const foo = () => {
-    console.log("Work Fine");
+  const [posts, setposts] = useState([]);
+   const [bar, setbar] = useState(false)
+   const Navigator = useNavigate();
+  useEffect(() => {
+    const getData = async () => {
+      const res = await getPost();
+      if (!res.error) {
+        setposts(res.data.data.data);
+      } else {
+        toast.error(res.data.message);
+      }
+    };
+    getData();
+  }, []);
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    Navigator("/");
   };
 
   return (
     <div className="isolate bg-white">
-      <RightSideBar />
+      <RightSideBar getval={(val) => setbar(val)} setVal={bar} setArray={val => setposts(val)} />
       <div className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]">
         <svg
           className="relative left-[calc(50%-11rem)] -z-10 h-[21.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:h-[42.375rem]"
@@ -142,9 +103,12 @@ export default function Example() {
               ))}
             </div>
             <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
-              <a className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+              <button
+                onClick={handleLogout}
+                className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+              >
                 Log out
-              </a>
+              </button>
             </div>
           </nav>
           <Dialog as="div" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -180,8 +144,6 @@ export default function Example() {
                     {navigation.map((item) => (
                       <a
                         key={item.name}
-                        onClick={() => window.scrollTo(item.href)}
-                        // href={item.href}
                         className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-400/10"
                       >
                         {item.name}
@@ -224,12 +186,12 @@ export default function Example() {
                   occaecat fugiat aliqua.
                 </p>
                 <div className="mt-8 flex gap-x-4 sm:justify-center">
-                  <a className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700">
-                    Get started{" "}
+                  <button onClick={() => setbar(true)} className="inline-block rounded-lg bg-indigo-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-indigo-600 hover:bg-indigo-700 hover:ring-indigo-700">
+                    Create Post{" "}
                     <span className="text-indigo-200" aria-hidden="true">
                       &rarr;
                     </span>
-                  </a>
+                  </button>
                 </div>
               </div>
               <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
@@ -281,48 +243,38 @@ export default function Example() {
             </p>
           </div>
           <div className="mx-auto mt-12 grid max-w-lg gap-5 lg:max-w-none lg:grid-cols-3">
-            {posts.map((post) => (
+            {posts.map((post, index) => (
               <div
-                key={post.title}
+                key={index}
                 className="flex flex-col overflow-hidden rounded-lg shadow-lg"
               >
                 <div className="flex flex-1 flex-col justify-between bg-white p-6">
                   <div className="flex-1">
                     <p className="text-sm font-medium text-indigo-600">
-                      <a href={post.category.href} className="hover:underline">
-                        {post.category.name}
-                      </a>
+                      <a className="hover:underline">{post.userName}</a>
                     </p>
-                    <a href={post.href} className="mt-2 block">
+                    <a className="mt-2 block">
                       <p className="text-xl font-semibold text-gray-900">
-                        {post.title}
+                        {post.postTitle}
                       </p>
                       <p className="mt-3 text-base text-gray-500">
-                        {post.description}
+                        {post.postDes}
                       </p>
                     </a>
                   </div>
                   <div className="mt-6 flex items-center">
                     <div className="flex-shrink-0">
-                      <a href={post.author.href}>
-                        <span className="sr-only">{post.author.name}</span>
-                        <img
-                          className="h-10 w-10 rounded-full"
-                          src={post.author.imageUrl}
-                          alt=""
-                        />
+                      <a>
+                        <span className="sr-only">{post.userName}</span>
                       </a>
                     </div>
-                    <div className="ml-3">
+                    <div>
                       <p className="text-sm font-medium text-gray-900">
-                        <a href={post.author.href} className="hover:underline">
-                          {post.author.name}
-                        </a>
+                        <a className="hover:underline">{post.userName}</a>
                       </p>
                       <div className="flex space-x-1 text-sm text-gray-500">
-                        <time dateTime={post.datetime}>{post.date}</time>
+                        <p>{new Date(post.createdAt).toLocaleString()}</p>
                         <span aria-hidden="true">&middot;</span>
-                        <span>{post.readingTime} read</span>
                       </div>
                     </div>
                   </div>

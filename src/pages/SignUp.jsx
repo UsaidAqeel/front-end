@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,14 +8,21 @@ import { toast } from "react-hot-toast";
 import { BounceLoader } from "react-spinners";
 
 const Signup = () => {
-  const [loader, setloader] = useState(false)
   const Navigator = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      Navigator("/home");
+    }
+  }, []);
+
+  const [loader, setloader] = useState(false);
 
   const signUpSchema = yup.object().shape({
     email: yup.string().email().required(),
     password: yup.string().required(),
     name: yup.string().required(),
-  }); 
+  });
 
   const {
     handleSubmit,
@@ -26,9 +33,8 @@ const Signup = () => {
   const formSubmit = async (data) => {
     const { email, name, password } = data;
     const obj = { userName: name, userEmail: email, userPassword: password };
-    setloader(true)
+    setloader(true);
     const res = await signupUser({ ...obj });
-    console.log(res);
     if (!res.error) {
       Navigator("/login");
       return;

@@ -77,6 +77,7 @@ export const navigation = [
   { name: "Posts", href: "#target" },
   { name: "Create Post", href: "#" },
   { name: "Company", href: "#" },
-]; 
+];
 
-export const baseUrl = "http://localhost:9000"
+export const baseUrl = "https://full-stack-application-production-7cba.up.railway.app";
+// export const baseUrl = "localhost:9000"
