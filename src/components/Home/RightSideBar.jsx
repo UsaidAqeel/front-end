@@ -57,12 +57,12 @@ const RightSideBar = ({ getval, setVal, setArray }) => {
   return (
     <>
       {loader && (
-        <div className="!z-10 bg-opacity-25 flex justify-center items-center bg-white w-100 h-screen backdrop-blur-md">
+        <div className="fixed top-0 left-0 right-0 bottom-0 !z-50 bg-opacity-25 flex justify-center items-center bg-white w-100 h-screen backdrop-blur-md">
           <BounceLoader size={40} />
         </div>
       )}
       <Transition.Root show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={handleClose}>
+        <Dialog as="div" className="relative" onClose={handleClose}>
           <Transition.Child
             as={Fragment}
             enter="ease-in-out duration-500"
@@ -75,7 +75,7 @@ const RightSideBar = ({ getval, setVal, setArray }) => {
             <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-hidden">
+          <div className={`fixed inset-0 overflow-hidden ${loader && '-z-10'}`}>
             <div className="absolute inset-0 overflow-hidden">
               <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                 <Transition.Child
