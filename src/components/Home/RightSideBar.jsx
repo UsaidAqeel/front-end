@@ -15,6 +15,7 @@ const RightSideBar = ({ getval, setVal, setArray }) => {
     setOpen(setVal);
   }, [setVal]);
 
+   
   const handleClose = () => {
     getval(false);
     setOpen(false);

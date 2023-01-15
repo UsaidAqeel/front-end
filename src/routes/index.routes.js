@@ -5,6 +5,7 @@ import Example from "../pages/home";
 import Login from "../pages/login";
 import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./protected.routes";
+import Man from "../pages/404";
 
 const RoutesCmp = () => {
   return (
@@ -16,6 +17,7 @@ const RoutesCmp = () => {
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Example />}></Route>
         </Route>
+        <Route path="*" element={<Man />}></Route>
       </Routes>
     </Router>
   );
